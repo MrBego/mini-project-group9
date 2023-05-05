@@ -52,6 +52,17 @@ db.connect((err) => {
             UNIQUE KEY username_UNIQUE (username)
           ) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci`,
     },
+    {
+      name: "createTableTransaction",
+      value: `CREATE TABLE IF NOT EXISTS transaction (
+        id_transaction INT PRIMARY KEY AUTO_INCREMENT,
+        user_id INT NOT NULL,
+        product_id INT NOT NULL,
+        quantity INT NOT NULL,
+        total_price INT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );`,  
+    }
   ];
 
   // Loop through the queries and execute them

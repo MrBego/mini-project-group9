@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import '../assets/styles/Cart.css';
-import { clearCart, removeItem } from '../redux/slice';
+import { clearCart, removeItem } from '../redux/slice/cartSlice.js';
 import { connect } from 'react-redux';
 import { Button } from 'react-bootstrap';
+import axios from 'axios';
+import AuthContext from "../components/AuthContext";
+
 
 const Cart = (props) => {
   const data = props.items.items;
@@ -14,6 +17,8 @@ const Cart = (props) => {
     if (newCart[index].Quantity > 1) {
       newCart[index].Quantity -= 1;
       setCart(newCart);
+    } else {
+      setCart(prevCart => prevCart.filter((cartItem, i) => i !== index));
     }
   };
 
@@ -23,7 +28,33 @@ const Cart = (props) => {
     setCart(newCart);
   };
 
+  const { username } =
+  useContext(AuthContext);
+
+  const handleBuy = async () => {
+    const cartData = cart.map(item => ({
+      username: username,
+      product_id: item.Id_Product,
+      quantity: item.Quantity,
+      total_price: item.Price * item.Quantity
+    }));
+  
+    try {
+      await Promise.all(cartData.map(item => axios.post('http://localhost:8000/cart', item)));
+      alert('Transaction completed');
+      // Clear cart
+      setCart([]);
+    } catch (error) {
+      console.error(error);
+      alert('Transaction failed');
+      console.log({
+        cart: cartData
+      });
+    }
+  };
+    
   const totalAmount = cart.reduce((total, item) => total + (item.Price * item.Quantity), 0);
+
 
   return (
     <div className='Cart'>
@@ -32,6 +63,7 @@ const Cart = (props) => {
       {cart.length === 0 ? (
         <p>No items in cart.</p>
       ) : (
+        <div>
         <table>
           <thead>
             <tr>
@@ -51,17 +83,7 @@ const Cart = (props) => {
                 <td className='product'>{item.Product_Name}</td>
                 <td>{item.Price.toLocaleString('id-ID')}</td>
                 <td className='quantity'>
-                <Button className='qButton' onClick={() => {
-                  if (item.Quantity > 1) {
-                    setCart(prevCart => {
-                      const newCart = [...prevCart];
-                      newCart[index].Quantity -= 1;
-                      return newCart;
-                    });
-                  } else {
-                    setCart(prevCart => prevCart.filter((cartItem, i) => i !== index));
-                  }
-                }}>-</Button>
+                <Button className='qButton' onClick={() => handleDecrement(index)}>-</Button>
                   <p>{item.Quantity}</p>
                   <Button className='qButton' onClick={() => handleIncrement(index)}>+</Button>
                 </td>
@@ -77,10 +99,13 @@ const Cart = (props) => {
             </tr>
           </tfoot>
         </table>
+        <div className='Cart'>
+          <Button variant='success' onClick={() => handleBuy()}>
+            BUY
+          </Button>
+        </div>
+        </div>
       )}
-      <Button variant='success' onClick={() => console.log(cart)}>
-        click me
-      </Button>
     </div>
   );
 };

@@ -7,7 +7,8 @@ const {
   productRouter,
   myStoreRouter,
   myProductRouter,
-  newCategoryRouter  
+  newCategoryRouter,
+  cartRouter,  
 } = require("./routers");
 const cors = require("cors");
 
@@ -20,6 +21,7 @@ app.use("/products", productRouter);
 app.use("/my-store", myStoreRouter);
 app.use("/my-store/my-product", myProductRouter);
 app.use("/my-store/my-product/new-category", newCategoryRouter)
+app.use("/cart", cartRouter)
 
 app.listen(PORT, () => {
   console.log(`SERVER IS RUNNING ON PORT ${PORT}`);

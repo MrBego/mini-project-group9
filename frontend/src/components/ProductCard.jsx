@@ -1,17 +1,22 @@
-import React from "react";
+import React, { useContext } from "react";
 import "../assets/styles/product_card.css";
 import { useDispatch } from 'react-redux'
-import { addItem } from "../redux/slice";
+import { addItem } from "../redux/slice/cartSlice";
+import AuthContext from "./AuthContext";
 
-const ProductCard = (Props) => {
-  console.log(Props, "in product card");
-  const { product } = Props;
+
+const ProductCard = (props) => {
+  console.log(props, "in product card");
+  const { product } = props;
 
   const dispatch = useDispatch()
 
-  const handleAddToCart = item => {
+  const handleAddToCart = (item) => {
     dispatch(addItem(item))
   }
+
+  const { loggedIn } =
+  useContext(AuthContext);
 
   return (
     <div className="card product-card">
@@ -22,11 +27,15 @@ const ProductCard = (Props) => {
           <span className="text-muted">IDR {product.Price}</span>
         </div>
         <div className="d-flex flex-row justify-content-end">
-          <button className="btn btn-primary mt-2" onClick={() => handleAddToCart(product)}>Add to Cart</button>
+          {loggedIn ? (
+            <button className="btn btn-primary mt-2" onClick={() => handleAddToCart(product)}>Add to Cart</button>
+          ) : (
+            <button className="btn btn-primary mt-2" disabled>Add to Cart</button>
+          )}
         </div>
       </div>
     </div>
   );
 };
 
-export default ProductCard
+export default ProductCard;

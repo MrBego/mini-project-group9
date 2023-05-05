@@ -1,9 +1,11 @@
 import React, { useState, useContext } from "react";
+import { useDispatch } from "react-redux";
 import { Form, Button } from "react-bootstrap";
 import "../../assets/styles/LoginPage.css";
 import Axios from "axios";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../../components/AuthContext";
+import { storeUserData } from "../../redux/slice/userDataSlice";
 
 const Login = () => {
   const { setLoggedIn, setUsername, setToken } = useContext(AuthContext);
@@ -11,8 +13,13 @@ const Login = () => {
     username: "",
     password: "",
   });
-
   const navigate = useNavigate();
+
+  const dispatch = useDispatch()
+
+  const storeUser = item => {
+    dispatch(storeUserData(item))
+  }
 
   const handleLogin = async () => {
     try {
@@ -83,7 +90,7 @@ const Login = () => {
         <Button
           variant="primary"
           type="submit"
-          onClick={(e) => handleSubmit(e)}
+          onClick={(e) => {handleSubmit(e); storeUser(formData.username)}}
         >
           Login
         </Button>

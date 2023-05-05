@@ -3,6 +3,8 @@ import { Navbar, Nav, Button, Dropdown } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import AuthContext from "./AuthContext";
 import DropdownItem from "react-bootstrap/esm/DropdownItem";
+import { clearUserData } from "../redux/slice/userDataSlice";
+import { useDispatch } from "react-redux";
 
 const MyNavbar = () => {
   const { loggedIn, username, setLoggedIn, setUsername } =
@@ -17,6 +19,12 @@ const MyNavbar = () => {
     localStorage.clear();
     navigate("/");
   };
+
+  const dispatch = useDispatch()
+
+  const clearUser = () => {
+    dispatch(clearUserData())
+  }
 
   return (
     <Navbar bg="light" expand="lg" style={{ padding: "8px" }}>
@@ -43,7 +51,7 @@ const MyNavbar = () => {
                 >
                   My Store
                 </DropdownItem>
-                <Dropdown.Item onClick={handleLogout}>Logout</Dropdown.Item>
+                <Dropdown.Item onClick={() => {handleLogout(); clearUser()}}>Logout</Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
           </Nav>
